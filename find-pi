@@ -1,0 +1,2 @@
+echo 'ssh at b8:27:eb:91:f2:8 on bridge100 ifscope [bridge]'
+arp -a
