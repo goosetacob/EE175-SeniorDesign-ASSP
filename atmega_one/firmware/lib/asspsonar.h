@@ -1,40 +1,42 @@
-#include "sonar.h"
+#ifndef SONAR_H
+#define SONAR_H
 
-/*
-*	sonarStat
-*	input: char with direction of which sonar sensor to detect:
-		0 -> front
-		1 -> right
-		2 -> left
-* output: integer value returned by the sonar sensor
-*/
+
+// sonarStat
+// input: char with direction of which sonar sensor to detect:
+// 		0 -> front
+// 		1 -> right
+// 		2 -> left
+// output: integer value returned by the sonar sensor
+
+
 long sonarStat(char sonarLabel) {
-	long distance;
+  	long distance;
 
-	int trigPin = -1;
-	int echoPin = -1;
+  	int trigPin = -1;
+  	int echoPin = -1;
 
-	if (sonarLabel == 0) {
-		//front
-		trigPin = 0;
-		echoPin = 4;
-	} else if (sonarLabel == 1) {
-		//right
-		trigPin = 1;
-		echoPin = 5;
-	} else if (sonarLabel == 2) {
-		//left
-		trigPin = 2;
-		echoPin = 6;
-	} else {
-		//cout << "no sonar sensor found";
-		return -1;
-	}
+  	if (sonarLabel == 0) {
+  		//front
+  		trigPin = 0;
+  		echoPin = 4;
+  	} else if (sonarLabel == 1) {
+  		//right
+  		trigPin = 1;
+  		echoPin = 5;
+  	} else if (sonarLabel == 2) {
+  		//left
+  		trigPin = 2;
+  		echoPin = 6;
+  	} else {
+  		//cout << "no sonar sensor found";
+  		return -1;
+  	}
 
-	sendTrigger(trigPin);
-	distance = getEcho(echoPin);
+  	sendTrigger(trigPin);
+  	distance = getEcho(echoPin);
 
-	return distance;
+  	return distance;
 }
 
 void sendTrigger(int trigPin) {
@@ -81,3 +83,5 @@ void waitForTimer(void) {
 	while(!(TIFR&0x10));	// wait for timer to set compare match flag
 	TCCR1B = STOP_CLK;		// Stop the timer
 }
+
+#endif
