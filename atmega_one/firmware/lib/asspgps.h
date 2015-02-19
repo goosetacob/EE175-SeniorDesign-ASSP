@@ -4,6 +4,8 @@
 #ifndef ASSPGPS_H
 #define ASSPGPS_H
 
+#include "halfduplexsimpleserial.h"
+
 unsigned char startCondition = 0xA5;
 unsigned char endCondition = 0x5A;
 
@@ -30,7 +32,7 @@ unsgined char commandClass Value = 0x00;
 unsigned char basicInformation{12} = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0D}
 
 //
-void gpsSendCmd(unsigned char cmdClass, unsigned char cmdValue) {  
+void gpsSendCmd(unsigned char cmdClass, unsigned char cmdValue) {
   HDSS_write(0xA5);
   HDSS_write(cmd_b);
   HDSS_write(cmd_s);

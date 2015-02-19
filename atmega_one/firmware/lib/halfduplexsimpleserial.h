@@ -1,7 +1,6 @@
 #ifndef HALF_DUPLEX_SIMPLE_SERIAL_H__
 #define HALF_DUPLEX_SIMPLE_SERIAL_H__
 /*
-Files     	: HalfDuplexSimpleSerial.c
 Version 	: 1.0
 Date     	: 2013/01/16
 Description	: This is a Half Duplex Serial Driver, The Driver only tested on SimplyTronics GPS Smart Module @ 9600 bps and UNO
@@ -43,7 +42,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <inttypes.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-//#include "Arduino.h"
+
+#if defined(ARDUINO) && ARDUINO >= 100
+  #include "Arduino.h"
+#else
+  #include "WProgram.h"
+#endif
 
 #define ERROR_RX_TIMEOUT ((uint16_t)0xFFFF)
 

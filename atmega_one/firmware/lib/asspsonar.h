@@ -1,6 +1,13 @@
 #ifndef SONAR_H
 #define SONAR_H
 
+#include "defines.h"
+
+long sonarStat(char sonarLabel);
+void sendTrigger(int trigPin);
+unsigned int getEcho(int echoPin);
+void startTimer(unsigned int time);
+void waitForTimer(void);
 
 // sonarStat
 // input: char with direction of which sonar sensor to detect:
@@ -8,8 +15,6 @@
 // 		1 -> right
 // 		2 -> left
 // output: integer value returned by the sonar sensor
-
-
 long sonarStat(char sonarLabel) {
   	long distance;
 
