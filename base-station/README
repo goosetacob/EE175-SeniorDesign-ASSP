@@ -1,3 +1,15 @@
+EE175-SeniorDesign-ASSP-Base Station
+====================================
+A docking station for the vehicle to recharge with power collected from solar cells.
+
+Developers
+----------
+* [Brett Fontaine](mailto:bfont001@ucr.edu) - Power Systems
+* [Gustavo Blanco](mailto:gblan002@ucr.edu) - Communications
+* [Russell Perry](mailto:rperr002@ucr.edu) - Robotic Control
+
+Raspberry Pi B+ Pin Out
+--------------------
  +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+
  | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
  +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+
@@ -24,3 +36,8 @@
  +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+
  | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
  +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+
+
+Find Pi on Network
+------------------
+echo 'ssh at b8:27:eb:91:f2:8 on bridge100 ifscope [bridge]'
+arp -a
