@@ -42,13 +42,13 @@ public:
     // DHTLIB_OK
     // DHTLIB_ERROR_CHECKSUM
     // DHTLIB_ERROR_TIMEOUT
-    int read11(uint8_t pin);
+//    int read11(uint8_t pin);
     int read(uint8_t pin);
 
-    inline int read21(uint8_t pin) { return read(pin); };
+//    inline int read21(uint8_t pin) { return read(pin); };
     inline int read22(uint8_t pin) { return read(pin); };
-    inline int read33(uint8_t pin) { return read(pin); };
-    inline int read44(uint8_t pin) { return read(pin); };
+//    inline int read33(uint8_t pin) { return read(pin); };
+//    inline int read44(uint8_t pin) { return read(pin); };
 
     double humidity;
     double temperature;
@@ -61,3 +61,4 @@ private:
 //
 // END OF FILE
 //
+

@@ -3,9 +3,14 @@ import time
 import os
 import RPi.GPIO as GPIO
 import json
-import datetime
+import time
 
 GPIO.setmode(GPIO.BCM)
+
+#indication LED
+LED = 21
+GPIO.setup(LED, GPIO.OUT)
+GPIO.output(LED, True)
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
@@ -64,63 +69,89 @@ try:
     #enable DEBUG
     DEBUG = 1
 
-    #battery data file
-    batteryFile = open('batteryFile.json', 'w');
+    #battery signal connected to adc 0
+    battery_adc = 0
 
-	#battery signal connected to adc 0
-	battery_adc = 0
+    #thresholds to start/stop charging
+    up_threshold = 697
+    low_threshold = 674
 
-	#thresholds to start/stop charging
-	up_threshold = 697
-	low_threshold = 674
+    #pin controling charge
+    battery_pin = 15
+    GPIO.setup(battery_pin, GPIO.OUT)
 
-	#pin controling charge
-	battery_pin = 15
-	GPIO.setup(battery_pin, GPIO.OUT)
+    #battery logic
+    batterycontrol = False
 
-	#battery logic
-	batterycontrol = False
+    #disconnect battery
+    GPIO.output(battery_pin, True)
 
-	#disconnect battery
-	GPIO.output(battery_pin, False)
-
-	#wait 300 sec (5 min) for batteries to stabalize
+    #wait 300 sec (5 min) for batteries to stabalize
     if DELAY:
         time.sleep(300)
 
 
-	while(1):
-		battery = readadc(battery_adc, SPICLK, SPIMOSI, SPIMISO, SPICS)
+    while(1):
 
-		if DEBUG:
-			print "battery (10 bit): ", battery, " | ", int(round(battery/10.24)) ,"%"
+        #battery data file
+        batteryFile = open('batteryFile.json', 'w')
+
+        battery = readadc(battery_adc, SPICLK, SPIMOSI, SPIMISO, SPICS)
+
+        batteryData = [ { 'date': time.strftime("%d:%m:%y"), 'time': time.strftime("%H:%M:%S"), 'batteryPercent': int(round(battery/10.24))} ]
+        batteryFile.write(batteryData)
+        batteryFile.write('\n')
+
+        if DEBUG:
+            print "battery (10 bit): ", battery, " | ", int(round(battery/10.24)) ,"%"
 
 
-		if batterycontrol == True:
-			if battery >= up_threshold:
-				if DEBUG:
-					print "   ___stop charging & rest for 10 min"
-				batterycontrol = False
-				GPIO.output(battery_pin, True)
+        if batterycontrol == True:
+            if battery >= up_threshold:
+                if DEBUG:
+                    print "   continue discharging"
+                batteryFile.write("   continue discharging")
+                batteryFile.write('\n')
+                batteryFile.close()
+            else:
+                if DEBUG:
+                    print "   continue charging"
+                batteryFile.write("   continue charging")
+                batteryFile.write('\n')
+                batteryFile.close()
+        elif batterycontrol == False:
+            if battery <= low_threshold:
+                if DEBUG:
+                    print "   ___start charging  & delay for 30 min"
+                batteryFile.write("   ___start charging  & delay for 30 min")
+                batteryFile.write('\n')
+                batteryFile.close()
+                batteryFile = open('batteryFile.json', 'w')
+
+                batterycontrol = True
+                GPIO.output(battery_pin, False)
+
                 if DELAY:
-                    time.sleep(600)
-			else:
-				if DEBUG:
-                    print "   continue charging for 30 min"
-				if DELAY:
                     time.sleep(1800)
 
-		elif batterycontrol == False:
-			if battery <= low_threshold:
-				if DEBUG:
-					print "   ___start charging"
-				batterycontrol = True
-				GPIO.output(battery_pin, False)
-			else:
-				if DEBUG:
-					print "   continue discharging"
-        batteryData = [ { 'date': datetime.date, 'time': datetime.time, 'batteryPercent': int(round(battery/10.24))} ]
-        batteryFile.write(batteryData)
+                if DEBUG:
+                    print "   ___stop charging & rest for 10 min"
+                batteryFile.write("   ___stop charging & rest for 10 min")
+                batteryFile.write('\n')
+                batteryFile.close()
+
+                batterycontrol = False
+                GPIO.output(battery_pin, True)
+
+                if DELAY:
+                    time.sleep(600)
+
+            else:
+                if DEBUG:
+                    print "   continue discharging"
+                batteryFile.write("   continue discharging")
+                batteryFile.write('\n')
+                batteryFile.close()
 
 
 except KeyboardInterrupt:
