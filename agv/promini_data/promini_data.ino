@@ -101,6 +101,81 @@ void logData() {
   latitude_t latitude; // latitude, union, degree, minute, second(the module will return degree(8-bit), minute(8-bit), mill-minute(16-bit))
   longitude_t longitude; //longitude, union, degree, minute, second(the module will return degree(8-bit), minute(8-bit), mill-minute(16-bit))
 
+   /* Get Latitude */
+  gps_send_cmd(CMD_INFO_BASIC, CMD_GET_LATITUDE);
+  // The module will return 5 bytes, after received the command
+  // Degree, minute, second(16-bit, MSB first), N/S
+  for(i = 0; i < 5; i++)
+  {
+      rxdata = HDSS_read_time(8);
+      if(rxdata == ERROR_RX_TIMEOUT)
+      {
+         Serial.println("ERROR_RX_TIMEOUT");
+          //return ERROR_RX_TIMEOUT;
+      }
+      latitude.buff[i] = rxdata;
+  }
+  currentFile.print("Latitude: ");
+  dec0_to_string(latitude.degree, 2, convert_buff);
+  currentFile.print((char *)convert_buff);
+  currentFile.print('`');
+  dec0_to_string(latitude.minute, 2, convert_buff);
+  currentFile.print((char *)convert_buff);
+  currentFile.print('\'');
+  temp16 = latitude.buff[2] << 8 | latitude.buff[3];
+  latitude.second = temp16 * 6 / 10;
+  dec0_to_string(latitude.second / 100, 2, convert_buff);
+  currentFile.print((char *)convert_buff);
+  currentFile.print(".");
+  dec0_to_string(latitude.second % 100  , 2, convert_buff);
+  currentFile.print((char *)convert_buff);
+  if(latitude.indicator == 0)
+  {
+      currentFile.print("\" N ");
+  }
+  else
+  {
+      currentFile.print("\" S ");
+  }
+  
+      /* Get Longitude */
+    gps_send_cmd(CMD_INFO_BASIC, CMD_GET_LONGITUDE);
+    // The module will return 5 bytes, after received the command
+    // Degree, minute, second(16-bit, MSB first), E/W
+    
+    for(i = 0; i < 5; i++)
+    {
+        rxdata = HDSS_read_time(8);
+        if(rxdata == ERROR_RX_TIMEOUT)
+        {
+          Serial.print("ERROR_RX_TIMEOUT");
+            //return ERROR_RX_TIMEOUT;
+        }
+        longitude.buff[i] = rxdata;
+    }
+    currentFile.print("Longitude: ");
+    dec0_to_string(longitude.degree, 3, convert_buff);
+    currentFile.print((char *)convert_buff);
+    currentFile.print('`');
+    dec0_to_string(longitude.minute, 2, convert_buff);
+    currentFile.print((char *)convert_buff);
+    currentFile.print('\'');
+    temp16 = longitude.buff[2] << 8 | longitude.buff[3];
+    longitude.second = temp16 * 6 / 10;
+    dec0_to_string(longitude.second / 100, 2, convert_buff);
+    currentFile.print((char *)convert_buff);
+    currentFile.print(".");
+    dec0_to_string(longitude.second % 100, 2, convert_buff);
+    currentFile.print((char *)convert_buff);
+    if(longitude.indicator == 0)
+    {
+        currentFile.print("\" E ");
+    }
+    else
+    {
+        currentFile.print("\" W ");
+    }
+
   /* Get UTC time */
   gps_send_cmd(CMD_INFO_BASIC, CMD_GET_TIME);
   // The module will return 3 bytes, after received the command
